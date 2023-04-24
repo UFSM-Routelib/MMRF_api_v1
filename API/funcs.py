@@ -7,7 +7,7 @@ import time
 funcs = Blueprint("funcs", __name__)
 
 
-@funcs.route("add-node", methods=['POST'])
+@funcs.route("add-vertex", methods=['POST'])
 def addVertex():
 
     content_type = request.headers.get('Content-Type')
@@ -16,9 +16,9 @@ def addVertex():
 
         body = request.json
 
-        fplaq = body['id']
-        flng = body['lng']
-        flat = body['lat']
+        fplaq = body['fplaq']
+        flng = body['fcoord']['x']
+        flat = body['fcoord']['y']
 
         real_first = Poste.query.filter_by(plaq=fplaq).first()
 
@@ -43,21 +43,21 @@ def addEdge():
 
         body = request.json
 
-        fplaq = body['node1']
+        fplaq = body['fplaq']
 
         n1 = Poste.query.filter_by(plaq=fplaq).first()
 
         if n1 is None:
             return 'Invalid font', 400
 
-        nplaq = body['node2']
+        nplaq = body['nplaq']
 
         n2 = Poste.query.filter_by(plaq=nplaq).first()
 
         if n2 is None:
             return 'invalid end', 400
 
-        dist = 1  # REMOVE DEBUG TEST
+        dist = body['distance']
 
         edge = Edge(node1 = n1.plaq, node2=n2.plaq, id=(str(n1.plaq) + str(n2.plaq)), distance=int(dist))
         edge2 = Edge(node1 = n2.plaq, node2=n1.plaq, id=(str(n2.plaq) + str(n1.plaq)), distance=int(dist))
